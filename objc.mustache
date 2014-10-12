@@ -1,0 +1,31 @@
+// Request: {{{request.name}}} ({{{request.url}}})
+
+NSURL* URL = [NSURL URLWithString:@"{{{request.url}}}"];
+NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:URL];
+request.HTTPMethod = @"{{{request.method}}}";
+
+{{#headers.has_headers}}
+// Headers
+
+{{#headers.header_list}}
+[request addValue:@"{{{header_name}}}" forHTTPHeaderField:@"{{{header_value}}}"];
+{{/headers.header_list}}
+
+{{/headers.has_headers}}
+{{#body.has_json_body}}
+// Body
+
+{{{body.json_body_object}}}
+request.HTTPBody = [NSJSONSerialization dataWithJSONObject:bodyObject options:kNilOptions error:NULL];
+{{/body.has_json_body}}
+{{#body.has_raw_body}}
+// Body
+
+const char bytes[7] = "MY BODY";
+request.HTTPBody = [NSData dataWithBytes:bytes length:7];
+{{/body.has_raw_body}}
+
+// Connection
+
+NSURLConnection* connection = [NSURLConnection connectionWithRequest:request delegate:nil];
+[connection start];
