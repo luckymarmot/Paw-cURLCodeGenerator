@@ -25,13 +25,30 @@
       };
     };
     this.body = function(request) {
-      var json_body;
+      var json_body, name, url_encoded_body, value;
       json_body = request.jsonBody;
       if (json_body) {
         return {
           "has_json_body": true,
-          "json_body": json_body,
           "json_body_object": this.json_body_object(json_body)
+        };
+      }
+      url_encoded_body = request.urlEncodedBody;
+      if (url_encoded_body) {
+        return {
+          "has_url_encoded_body": true,
+          "url_encoded_body": (function() {
+            var _results;
+            _results = [];
+            for (name in url_encoded_body) {
+              value = url_encoded_body[name];
+              _results.push({
+                "name": name,
+                "value": value
+              });
+            }
+            return _results;
+          })()
         };
       }
     };
@@ -94,6 +111,9 @@
         "headers": this.headers(request),
         "body": this.body(request)
       };
+      if (view.body.has_url_encoded_body) {
+        view["has_utils_query_string"] = true;
+      }
       template = readFile("objc.mustache");
       return Mustache.render(template, view);
     };

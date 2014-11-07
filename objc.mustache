@@ -12,8 +12,18 @@ request.HTTPMethod = @"{{{request.method}}}";
 {{/headers.header_list}}
 
 {{/headers.has_headers}}
+{{#body.has_url_encoded_body}}
+// Form URL-Encoded Body
+
+NSDictionary* bodyParameters = @{
+{{#body.url_encoded_body}}
+	@"{{{name}}}": @"{{{value}}}",
+{{/body.url_encoded_body}}
+};
+request.HTTPBody = [NSStringFromQueryParametersDictionary(bodyParameters) dataUsingEncoding:NSUTF8StringEncoding];
+{{/body.has_url_encoded_body}}
 {{#body.has_json_body}}
-// Body
+// JSON Body
 
 {{{body.json_body_object}}}
 request.HTTPBody = [NSJSONSerialization dataWithJSONObject:bodyObject options:kNilOptions error:NULL];
@@ -29,3 +39,23 @@ request.HTTPBody = [NSData dataWithBytes:bytes length:7];
 
 NSURLConnection* connection = [NSURLConnection connectionWithRequest:request delegate:nil];
 [connection start];
+
+{{#has_utils_query_string}}
+//
+// Utils: Query String
+// Add this part before your class implementation
+//
+
+static NSString* NSStringFromQueryParametersDictionary(NSDictionary* queryParameters)
+{
+    NSMutableArray* parts = [NSMutableArray array];
+    [queryParameters enumerateKeysAndObjectsUsingBlock:^(id key, id value, BOOL *stop) {
+        NSString *part = [NSString stringWithFormat: @"%@=%@",
+            [key stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding],
+            [value stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding]
+        ];
+        [parts addObject:part];
+    }];
+    return [parts componentsJoinedByString: @"&"];
+}
+{{/has_utils_query_string}}

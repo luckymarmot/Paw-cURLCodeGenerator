@@ -17,8 +17,16 @@ ObjCNSURLConnectionCodeGenerator = ->
         if json_body
             return {
                 "has_json_body":true
-                "json_body":json_body
                 "json_body_object":@json_body_object json_body
+            }
+        url_encoded_body = request.urlEncodedBody
+        if url_encoded_body
+            return {
+                "has_url_encoded_body":true
+                "url_encoded_body": ({
+                    "name": name
+                    "value": value
+                } for name, value of url_encoded_body)
             }
 
     @json_body_object = (object, indent = 0) ->
@@ -63,13 +71,18 @@ ObjCNSURLConnectionCodeGenerator = ->
             "headers": @headers request
             "body": @body request
 
+        if view.body.has_url_encoded_body
+            view["has_utils_query_string"] = true
+
         template = readFile "objc.mustache"
         Mustache.render template, view
 
     return
 
 
-ObjCNSURLConnectionCodeGenerator.identifier = "com.luckymarmot.PawExtensions.ObjCNSURLConnectionCodeGenerator";
-ObjCNSURLConnectionCodeGenerator.title = "Objective-C (NSURLConnection)";
+ObjCNSURLConnectionCodeGenerator.identifier =
+    "com.luckymarmot.PawExtensions.ObjCNSURLConnectionCodeGenerator";
+ObjCNSURLConnectionCodeGenerator.title =
+    "Objective-C (NSURLConnection)";
 
 registerCodeGenerator ObjCNSURLConnectionCodeGenerator
