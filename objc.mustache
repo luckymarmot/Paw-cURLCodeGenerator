@@ -1,6 +1,14 @@
-// Request: {{{request.name}}} ({{{request.url}}})
+// {{{request.name}}} ({{{request.method}}} {{{url.base}}})
 
-NSURL* URL = [NSURL URLWithString:@"{{{request.url}}}"];
+NSURL* URL = [NSURL URLWithString:@"{{{url.base}}}"];
+{{#url.has_params}}
+NSDictionary* URLParams = @{
+{{#url.params}}
+    @"{{{name}}}": @"{{{value}}}",
+{{/url.params}}
+};
+URL = NSURLByAppendingQueryParameters(URL, URLParams);
+{{/url.has_params}}
 NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:URL];
 request.HTTPMethod = @"{{{request.method}}}";
 
@@ -20,33 +28,47 @@ NSDictionary* bodyParameters = @{
 	@"{{{name}}}": @"{{{value}}}",
 {{/body.url_encoded_body}}
 };
-request.HTTPBody = [NSStringFromQueryParametersDictionary(bodyParameters) dataUsingEncoding:NSUTF8StringEncoding];
+request.HTTPBody = [NSStringFromQueryParameters(bodyParameters) dataUsingEncoding:NSUTF8StringEncoding];
+
 {{/body.has_url_encoded_body}}
 {{#body.has_json_body}}
 // JSON Body
 
 {{{body.json_body_object}}}
 request.HTTPBody = [NSJSONSerialization dataWithJSONObject:bodyObject options:kNilOptions error:NULL];
+
 {{/body.has_json_body}}
 {{#body.has_raw_body}}
 // Body
 
-const char bytes[7] = "MY BODY";
-request.HTTPBody = [NSData dataWithBytes:bytes length:7];
-{{/body.has_raw_body}}
+const char bytes[{{body.raw_body.length}}] = "{{{body.raw_body}}}";
+request.HTTPBody = [NSData dataWithBytes:bytes length:{{body.raw_body.length}}];
 
+{{/body.has_raw_body}}
+{{#body.has_long_body}}
+// Body
+
+request.HTTPBody = nil; // Set your own body data
+
+{{/body.has_long_body}}
 // Connection
 
 NSURLConnection* connection = [NSURLConnection connectionWithRequest:request delegate:nil];
 [connection start];
 
 {{#has_utils_query_string}}
-//
-// Utils: Query String
-// Add this part before your class implementation
-//
+/*
+ * Utils: Add this section before your class implementation
+ */
 
-static NSString* NSStringFromQueryParametersDictionary(NSDictionary* queryParameters)
+/**
+ This creates a new query parameters string from the given NSDictionary. For
+ example, if the input is @{@"day":@"Tuesday", @"month":@"January"}, the output
+ string will be @"day=Tuesday&month=January".
+ @param queryParameters The input dictionary.
+ @return The created parameters string.
+*/
+static NSString* NSStringFromQueryParameters(NSDictionary* queryParameters)
 {
     NSMutableArray* parts = [NSMutableArray array];
     [queryParameters enumerateKeysAndObjectsUsingBlock:^(id key, id value, BOOL *stop) {
@@ -57,5 +79,20 @@ static NSString* NSStringFromQueryParametersDictionary(NSDictionary* queryParame
         [parts addObject:part];
     }];
     return [parts componentsJoinedByString: @"&"];
+}
+
+/**
+ Creates a new URL by adding the given query parameters.
+ @param URL The input URL.
+ @param queryParameters The query parameter dictionary to add.
+ @return A new NSURL.
+*/
+static NSURL* NSURLByAppendingQueryParameters(NSURL* URL, NSDictionary* queryParameters)
+{
+    NSString* URLString = [NSString stringWithFormat:@"%@?%@",
+        [URL absoluteString],
+        NSStringFromQueryParameters(queryParameters),
+    ];
+    return [NSURL URLWithString:URLString];
 }
 {{/has_utils_query_string}}

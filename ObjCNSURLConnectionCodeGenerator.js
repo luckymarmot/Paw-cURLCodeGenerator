@@ -4,7 +4,39 @@
 
   require("mustache.js");
 
+  require("URI.js");
+
   ObjCNSURLConnectionCodeGenerator = function() {
+    this.url = function(request) {
+      var name, url_params, url_params_object, value;
+      url_params_object = (function() {
+        var _uri;
+        _uri = URI(request.url);
+        return _uri.search(true);
+      })();
+      url_params = (function() {
+        var _results;
+        _results = [];
+        for (name in url_params_object) {
+          value = url_params_object[name];
+          _results.push({
+            "name": name,
+            "value": value
+          });
+        }
+        return _results;
+      })();
+      return {
+        "base": (function() {
+          var _uri;
+          _uri = URI(request.url);
+          _uri.search("");
+          return _uri;
+        })(),
+        "params": url_params,
+        "has_params": url_params.length > 0
+      };
+    };
     this.headers = function(request) {
       var header_name, header_value, headers;
       headers = request.headers;
@@ -25,7 +57,7 @@
       };
     };
     this.body = function(request) {
-      var json_body, name, url_encoded_body, value;
+      var json_body, name, raw_body, url_encoded_body, value;
       json_body = request.jsonBody;
       if (json_body) {
         return {
@@ -50,6 +82,19 @@
             return _results;
           })()
         };
+      }
+      raw_body = request.body;
+      if (raw_body) {
+        if (raw_body.length < 10000) {
+          return {
+            "has_raw_body": true,
+            "raw_body": raw_body
+          };
+        } else {
+          return {
+            "has_long_body": true
+          };
+        }
       }
     };
     this.json_body_object = function(object, indent) {
@@ -108,10 +153,11 @@
       request = context.getCurrentRequest();
       view = {
         "request": context.getCurrentRequest(),
+        "url": this.url(request),
         "headers": this.headers(request),
         "body": this.body(request)
       };
-      if (view.body.has_url_encoded_body) {
+      if (view.url.has_params || (view.body && view.body.has_url_encoded_body)) {
         view["has_utils_query_string"] = true;
       }
       template = readFile("objc.mustache");

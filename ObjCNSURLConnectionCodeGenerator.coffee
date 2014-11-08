@@ -1,6 +1,27 @@
 require "mustache.js"
+require "URI.js"
 
 ObjCNSURLConnectionCodeGenerator = ->
+
+    @url = (request) ->
+        url_params_object = (() ->
+            _uri = URI request.url
+            _uri.search true
+        )()
+        url_params = ({
+            "name":name
+            "value":value
+        } for name, value of url_params_object)
+        
+        return {
+            "base": (() ->
+                _uri = URI request.url
+                _uri.search("")
+                _uri
+            )()
+            "params":url_params
+            "has_params":url_params.length > 0
+        }
 
     @headers = (request) ->
         headers = request.headers
@@ -19,6 +40,7 @@ ObjCNSURLConnectionCodeGenerator = ->
                 "has_json_body":true
                 "json_body_object":@json_body_object json_body
             }
+            
         url_encoded_body = request.urlEncodedBody
         if url_encoded_body
             return {
@@ -28,6 +50,18 @@ ObjCNSURLConnectionCodeGenerator = ->
                     "value": value
                 } for name, value of url_encoded_body)
             }
+        
+        raw_body = request.body
+        if raw_body
+            if raw_body.length < 10000
+                return {
+                    "has_raw_body":true
+                    "raw_body": raw_body
+                }
+            else
+                return {
+                    "has_long_body":true
+                }
 
     @json_body_object = (object, indent = 0) ->
         if object == null
@@ -68,10 +102,11 @@ ObjCNSURLConnectionCodeGenerator = ->
 
         view =
             "request": context.getCurrentRequest()
+            "url": @url request
             "headers": @headers request
             "body": @body request
 
-        if view.body.has_url_encoded_body
+        if view.url.has_params or (view.body and view.body.has_url_encoded_body)
             view["has_utils_query_string"] = true
 
         template = readFile "objc.mustache"
