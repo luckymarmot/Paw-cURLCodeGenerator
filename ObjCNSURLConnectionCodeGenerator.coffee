@@ -1,6 +1,9 @@
 require "mustache.js"
 require "URI.js"
 
+addslashes = (str) ->
+    ("#{str}").replace(/[\\"]/g, '\\$&')
+
 ObjCNSURLConnectionCodeGenerator = ->
 
     @url = (request) ->
@@ -9,18 +12,18 @@ ObjCNSURLConnectionCodeGenerator = ->
             _uri.search true
         )()
         url_params = ({
-            "name":name
-            "value":value
+            "name": addslashes name
+            "value": addslashes value
         } for name, value of url_params_object)
-        
+
         return {
-            "base": (() ->
+            "base": addslashes (() ->
                 _uri = URI request.url
                 _uri.search("")
                 _uri
             )()
-            "params":url_params
-            "has_params":url_params.length > 0
+            "params": url_params
+            "has_params": url_params.length > 0
         }
 
     @headers = (request) ->
@@ -28,8 +31,8 @@ ObjCNSURLConnectionCodeGenerator = ->
         return {
             "has_headers": Object.keys(headers).length > 0
             "header_list": ({
-                "header_name": header_name,
-                "header_value": header_value
+                "header_name": addslashes header_name
+                "header_value": addslashes header_value
             } for header_name, header_value of headers)
         }
 
@@ -40,23 +43,23 @@ ObjCNSURLConnectionCodeGenerator = ->
                 "has_json_body":true
                 "json_body_object":@json_body_object json_body
             }
-            
+
         url_encoded_body = request.urlEncodedBody
         if url_encoded_body
             return {
                 "has_url_encoded_body":true
                 "url_encoded_body": ({
-                    "name": name
-                    "value": value
+                    "name": addslashes name
+                    "value": addslashes value
                 } for name, value of url_encoded_body)
             }
-        
+
         raw_body = request.body
         if raw_body
             if raw_body.length < 10000
                 return {
                     "has_raw_body":true
-                    "raw_body": raw_body
+                    "raw_body": addslashes raw_body
                 }
             else
                 return {
@@ -67,7 +70,7 @@ ObjCNSURLConnectionCodeGenerator = ->
         if object == null
             s = "[NSNull null]"
         else if typeof(object) == 'string'
-            s = "@\"#{object}\""
+            s = "@\"#{addslashes object}\""
         else if typeof(object) == 'number'
             s = "@#{object}"
         else if typeof(object) == 'boolean'
@@ -81,7 +84,7 @@ ObjCNSURLConnectionCodeGenerator = ->
                     "\n#{indent_str}]"
             else
                 s = "@{\n" +
-                    ("#{indent_str_children}@\"#{key}\": #{@json_body_object(value, indent+1)}" for key, value of object).join(',\n') +
+                    ("#{indent_str_children}@\"#{addslashes key}\": #{@json_body_object(value, indent+1)}" for key, value of object).join(',\n') +
                     "\n#{indent_str}}"
 
         if indent is 0

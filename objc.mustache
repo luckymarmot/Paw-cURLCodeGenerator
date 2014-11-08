@@ -41,8 +41,7 @@ request.HTTPBody = [NSJSONSerialization dataWithJSONObject:bodyObject options:kN
 {{#body.has_raw_body}}
 // Body
 
-const char bytes[{{body.raw_body.length}}] = "{{{body.raw_body}}}";
-request.HTTPBody = [NSData dataWithBytes:bytes length:{{body.raw_body.length}}];
+request.HTTPBody = [@"{{{body.raw_body}}}" dataUsingEncoding:NSUTF8StringEncoding];
 
 {{/body.has_raw_body}}
 {{#body.has_long_body}}
