@@ -56,7 +56,7 @@ ObjCNSURLSessionCodeGenerator = ->
 
         raw_body = request.body
         if raw_body
-            if raw_body.length < 10000
+            if raw_body.length < 5000
                 return {
                     "has_raw_body":true
                     "raw_body": addslashes raw_body
