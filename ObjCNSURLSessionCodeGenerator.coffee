@@ -41,7 +41,7 @@ ObjCNSURLSessionCodeGenerator = ->
         if json_body
             return {
                 "has_json_body":true
-                "json_body_object":@json_body_object json_body
+                "json_body_object":@json_body_object json_body, 1
             }
 
         url_encoded_body = request.urlEncodedBody
@@ -76,8 +76,8 @@ ObjCNSURLSessionCodeGenerator = ->
         else if typeof(object) == 'boolean'
             s = "@#{if object then "YES" else "NO"}"
         else if typeof(object) == 'object'
-            indent_str = Array(indent + 1).join('\t')
-            indent_str_children = Array(indent + 2).join('\t')
+            indent_str = Array(indent + 1).join('    ')
+            indent_str_children = Array(indent + 2).join('    ')
             if object.length?
                 s = "@[\n" +
                     ("#{indent_str_children}#{@json_body_object(value, indent+1)}" for value in object).join(',\n') +
@@ -87,7 +87,7 @@ ObjCNSURLSessionCodeGenerator = ->
                     ("#{indent_str_children}@\"#{addslashes key}\": #{@json_body_object(value, indent+1)}" for key, value of object).join(',\n') +
                     "\n#{indent_str}}"
 
-        if indent is 0
+        if indent <= 1
             if typeof(object) == 'object'
                 # NSArray
                 if object.length?

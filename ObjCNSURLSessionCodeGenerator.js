@@ -66,7 +66,7 @@
       if (json_body) {
         return {
           "has_json_body": true,
-          "json_body_object": this.json_body_object(json_body)
+          "json_body_object": this.json_body_object(json_body, 1)
         };
       }
       url_encoded_body = request.urlEncodedBody;
@@ -115,8 +115,8 @@
       } else if (typeof object === 'boolean') {
         s = "@" + (object ? "YES" : "NO");
       } else if (typeof object === 'object') {
-        indent_str = Array(indent + 1).join('\t');
-        indent_str_children = Array(indent + 2).join('\t');
+        indent_str = Array(indent + 1).join('    ');
+        indent_str_children = Array(indent + 2).join('    ');
         if (object.length != null) {
           s = "@[\n" + ((function() {
             var _i, _len, _results;
@@ -139,7 +139,7 @@
           }).call(this)).join(',\n') + ("\n" + indent_str + "}");
         }
       }
-      if (indent === 0) {
+      if (indent <= 1) {
         if (typeof object === 'object') {
           if (object.length != null) {
             s = "NSArray* bodyObject = " + s + ";";
