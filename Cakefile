@@ -1,7 +1,7 @@
 {print} = require 'sys'
 {spawn} = require 'child_process'
 
-file = 'ObjCNSURLConnectionCodeGenerator.coffee'
+file = 'ObjCNSURLSessionCodeGenerator.coffee'
 
 task 'build', ->
     coffee = spawn 'coffee', ['-c', file]

@@ -1,59 +1,84 @@
-// {{{request.name}}} ({{{request.method}}} {{{url.base}}})
+- (void)sendRequest:(id)sender
+{
+    /* Configure session, choose between:
+       * defaultSessionConfiguration
+       * ephemeralSessionConfiguration
+       * backgroundSessionConfigurationWithIdentifier:
+     And set session-wide properties, such as: HTTPAdditionalHeaders,
+     HTTPCookieAcceptPolicy, requestCachePolicy or timeoutIntervalForRequest.
+     */
+    NSURLSessionConfiguration* sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+ 
+    /* Create session, and optionally set a NSURLSessionDelegate. */
+    NSURLSession* session = [NSURLSession sessionWithConfiguration:sessionConfig delegate:nil delegateQueue:nil];
 
-NSURL* URL = [NSURL URLWithString:@"{{{url.base}}}"];
-{{#url.has_params}}
-NSDictionary* URLParams = @{
-{{#url.params}}
-    @"{{{name}}}": @"{{{value}}}",
-{{/url.params}}
-};
-URL = NSURLByAppendingQueryParameters(URL, URLParams);
-{{/url.has_params}}
-NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:URL];
-request.HTTPMethod = @"{{{request.method}}}";
+    /* Create the Request:
+       {{{request.name}}} ({{{request.method}}} {{{url.base}}})
+     */
 
-{{#headers.has_headers}}
-// Headers
+    NSURL* URL = [NSURL URLWithString:@"{{{url.base}}}"];
+    {{#url.has_params}}
+    NSDictionary* URLParams = @{
+    {{#url.params}}
+        @"{{{name}}}": @"{{{value}}}",
+    {{/url.params}}
+    };
+    URL = NSURLByAppendingQueryParameters(URL, URLParams);
+    {{/url.has_params}}
+    NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:URL];
+    request.HTTPMethod = @"{{{request.method}}}";
 
-{{#headers.header_list}}
-[request addValue:@"{{{header_name}}}" forHTTPHeaderField:@"{{{header_value}}}"];
-{{/headers.header_list}}
+    {{#headers.has_headers}}
+    // Headers
 
-{{/headers.has_headers}}
-{{#body.has_url_encoded_body}}
-// Form URL-Encoded Body
+    {{#headers.header_list}}
+    [request addValue:@"{{{header_name}}}" forHTTPHeaderField:@"{{{header_value}}}"];
+    {{/headers.header_list}}
 
-NSDictionary* bodyParameters = @{
-{{#body.url_encoded_body}}
-	@"{{{name}}}": @"{{{value}}}",
-{{/body.url_encoded_body}}
-};
-request.HTTPBody = [NSStringFromQueryParameters(bodyParameters) dataUsingEncoding:NSUTF8StringEncoding];
+    {{/headers.has_headers}}
+    {{#body.has_url_encoded_body}}
+    // Form URL-Encoded Body
 
-{{/body.has_url_encoded_body}}
-{{#body.has_json_body}}
-// JSON Body
+    NSDictionary* bodyParameters = @{
+    {{#body.url_encoded_body}}
+    	@"{{{name}}}": @"{{{value}}}",
+    {{/body.url_encoded_body}}
+    };
+    request.HTTPBody = [NSStringFromQueryParameters(bodyParameters) dataUsingEncoding:NSUTF8StringEncoding];
 
-{{{body.json_body_object}}}
-request.HTTPBody = [NSJSONSerialization dataWithJSONObject:bodyObject options:kNilOptions error:NULL];
+    {{/body.has_url_encoded_body}}
+    {{#body.has_json_body}}
+    // JSON Body
 
-{{/body.has_json_body}}
-{{#body.has_raw_body}}
-// Body
+    {{{body.json_body_object}}}
+    request.HTTPBody = [NSJSONSerialization dataWithJSONObject:bodyObject options:kNilOptions error:NULL];
 
-request.HTTPBody = [@"{{{body.raw_body}}}" dataUsingEncoding:NSUTF8StringEncoding];
+    {{/body.has_json_body}}
+    {{#body.has_raw_body}}
+    // Body
 
-{{/body.has_raw_body}}
-{{#body.has_long_body}}
-// Body
+    request.HTTPBody = [@"{{{body.raw_body}}}" dataUsingEncoding:NSUTF8StringEncoding];
 
-request.HTTPBody = nil; // Set your own body data
+    {{/body.has_raw_body}}
+    {{#body.has_long_body}}
+    // Body
 
-{{/body.has_long_body}}
-// Connection
+    request.HTTPBody = nil; // Set your own body data
 
-NSURLConnection* connection = [NSURLConnection connectionWithRequest:request delegate:nil];
-[connection start];
+    {{/body.has_long_body}}
+    /* Start a new Task */
+    NSURLSessionDataTask* task = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        if (error == nil) {
+            // Success
+            NSLog(@"URL Session Task Succeeded: HTTP %ld", ((NSHTTPURLResponse*)response).statusCode);
+        }
+        else {
+            // Failure
+            NSLog(@"URL Session Task Failed: %@", [error localizedDescription]);
+        }
+    }];
+    [task resume];
+}
 
 {{#has_utils_query_string}}
 /*
@@ -90,7 +115,7 @@ static NSURL* NSURLByAppendingQueryParameters(NSURL* URL, NSDictionary* queryPar
 {
     NSString* URLString = [NSString stringWithFormat:@"%@?%@",
         [URL absoluteString],
-        NSStringFromQueryParameters(queryParameters),
+        NSStringFromQueryParameters(queryParameters)
     ];
     return [NSURL URLWithString:URLString];
 }

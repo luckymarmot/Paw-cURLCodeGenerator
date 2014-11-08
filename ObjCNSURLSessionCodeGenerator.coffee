@@ -4,7 +4,7 @@ require "URI.js"
 addslashes = (str) ->
     ("#{str}").replace(/[\\"]/g, '\\$&')
 
-ObjCNSURLConnectionCodeGenerator = ->
+ObjCNSURLSessionCodeGenerator = ->
 
     @url = (request) ->
         url_params_object = (() ->
@@ -118,9 +118,9 @@ ObjCNSURLConnectionCodeGenerator = ->
     return
 
 
-ObjCNSURLConnectionCodeGenerator.identifier =
-    "com.luckymarmot.PawExtensions.ObjCNSURLConnectionCodeGenerator";
-ObjCNSURLConnectionCodeGenerator.title =
-    "Objective-C (NSURLConnection)";
+ObjCNSURLSessionCodeGenerator.identifier =
+    "com.luckymarmot.PawExtensions.ObjCNSURLSessionCodeGenerator";
+ObjCNSURLSessionCodeGenerator.title =
+    "Objective-C (NSURLSession)";
 
-registerCodeGenerator ObjCNSURLConnectionCodeGenerator
+registerCodeGenerator ObjCNSURLSessionCodeGenerator
