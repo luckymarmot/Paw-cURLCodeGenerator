@@ -107,18 +107,18 @@
         indent = 0;
       }
       if (object === null) {
-        s = "[NSNull null]";
+        s = "NSNull()";
       } else if (typeof object === 'string') {
-        s = "@\"" + (addslashes(object)) + "\"";
+        s = "\"" + (addslashes(object)) + "\"";
       } else if (typeof object === 'number') {
-        s = "@" + object;
+        s = "" + object;
       } else if (typeof object === 'boolean') {
-        s = "@" + (object ? "YES" : "NO");
+        s = "" + (object ? "true" : "false");
       } else if (typeof object === 'object') {
-        indent_str = Array(indent + 1).join('    ');
-        indent_str_children = Array(indent + 2).join('    ');
+        indent_str = Array(indent + 2).join('    ');
+        indent_str_children = Array(indent + 3).join('    ');
         if (object.length != null) {
-          s = "@[\n" + ((function() {
+          s = "[\n" + ((function() {
             var _i, _len, _results;
             _results = [];
             for (_i = 0, _len = object.length; _i < _len; _i++) {
@@ -128,27 +128,19 @@
             return _results;
           }).call(this)).join(',\n') + ("\n" + indent_str + "]");
         } else {
-          s = "@{\n" + ((function() {
+          s = "[\n" + ((function() {
             var _results;
             _results = [];
             for (key in object) {
               value = object[key];
-              _results.push("" + indent_str_children + "@\"" + (addslashes(key)) + "\": " + (this.json_body_object(value, indent + 1)));
+              _results.push("" + indent_str_children + "\"" + (addslashes(key)) + "\": " + (this.json_body_object(value, indent + 1)));
             }
             return _results;
-          }).call(this)).join(',\n') + ("\n" + indent_str + "}");
+          }).call(this)).join(',\n') + ("\n" + indent_str + "]");
         }
       }
       if (indent <= 1) {
-        if (typeof object === 'object') {
-          if (object.length != null) {
-            s = "NSArray* bodyObject = " + s + ";";
-          } else {
-            s = "NSDictionary* bodyObject = " + s + ";";
-          }
-        } else {
-          s = "id bodyObject = " + s + ";";
-        }
+        s = "let bodyObject = " + s;
       }
       return s;
     };
