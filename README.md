@@ -1,6 +1,6 @@
-#Objective-C + NSURLSession Code Generator (Paw Extension)
+#Swift + NSURLSession Code Generator (Paw Extension)
 
-This a Paw Extension that generates code for Objective-C using the `NSURLSession` library.
+This a Paw Extension that generates code for Swift using the `NSURLSession` library.
 
 ##License
 

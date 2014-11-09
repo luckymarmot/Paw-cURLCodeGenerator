@@ -4,7 +4,7 @@ require "URI.js"
 addslashes = (str) ->
     ("#{str}").replace(/[\\"]/g, '\\$&')
 
-ObjCNSURLSessionCodeGenerator = ->
+SwiftNSURLSessionCodeGenerator = ->
 
     @url = (request) ->
         url_params_object = (() ->
@@ -112,15 +112,15 @@ ObjCNSURLSessionCodeGenerator = ->
         if view.url.has_params or (view.body and view.body.has_url_encoded_body)
             view["has_utils_query_string"] = true
 
-        template = readFile "objc.mustache"
+        template = readFile "swift.mustache"
         Mustache.render template, view
 
     return
 
 
-ObjCNSURLSessionCodeGenerator.identifier =
-    "com.luckymarmot.PawExtensions.ObjCNSURLSessionCodeGenerator";
-ObjCNSURLSessionCodeGenerator.title =
-    "Objective-C (NSURLSession)";
+SwiftNSURLSessionCodeGenerator.identifier =
+    "com.luckymarmot.PawExtensions.SwiftNSURLSessionCodeGenerator";
+SwiftNSURLSessionCodeGenerator.title =
+    "Swift (NSURLSession)";
 
-registerCodeGenerator ObjCNSURLSessionCodeGenerator
+registerCodeGenerator SwiftNSURLSessionCodeGenerator
