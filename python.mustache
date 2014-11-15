@@ -1,117 +1,45 @@
-class MyRequestController {
-    func sendRequest() {
-        /* Configure session, choose between:
-           * defaultSessionConfiguration
-           * ephemeralSessionConfiguration
-           * backgroundSessionConfigurationWithIdentifier:
-         And set session-wide properties, such as: HTTPAdditionalHeaders,
-         HTTPCookieAcceptPolicy, requestCachePolicy or timeoutIntervalForRequest.
-         */
-        let sessionConfig = NSURLSessionConfiguration.defaultSessionConfiguration()
- 
-        /* Create session, and optionally set a NSURLSessionDelegate. */
-        let session = NSURLSession(configuration: sessionConfig, delegate: nil, delegateQueue: nil)
+import requests
+{{#body.has_json_body}}
+import json
+{{/body.has_json_body}}
 
-        /* Create the Request:
-           {{{request.name}}} ({{{request.method}}} {{{url.base}}})
-         */
+def send_request():
+    # {{{request.name}}} ({{{request.method}}} {{{url.base}}})
 
-        var URL = NSURL(string: "{{{url.base}}}")
+    try:
+        r = requests.{{{method}}}(
+            url="{{{url.base}}}",
         {{#url.has_params}}
-        let URLParams = [
-        {{#url.params}}
-            "{{{name}}}": "{{{value}}}",
-        {{/url.params}}
-        ]
-        URL = self.NSURLByAppendingQueryParameters(URL, queryParameters: URLParams)
-        {{/url.has_params}}
-        let request = NSMutableURLRequest(URL: URL!)
-        request.HTTPMethod = "{{{request.method}}}"
-
-        {{#headers.has_headers}}
-        // Headers
-
-        {{#headers.header_list}}
-        request.addValue("{{{header_value}}}", forHTTPHeaderField: "{{{header_name}}}")
-        {{/headers.header_list}}
-
-        {{/headers.has_headers}}
-        {{#body.has_url_encoded_body}}
-        // Form URL-Encoded Body
-
-        let bodyParameters = [
-        {{#body.url_encoded_body}}
-            "{{{name}}}": "{{{value}}}",
-        {{/body.url_encoded_body}}
-        ]
-        let bodyString = self.stringFromQueryParameters(bodyParameters)
-        request.HTTPBody = bodyString.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
-
-        {{/body.has_url_encoded_body}}
-        {{#body.has_json_body}}
-        // JSON Body
-
-        {{{body.json_body_object}}}
-        request.HTTPBody = [NSJSONSerialization dataWithJSONObject:bodyObject options:kNilOptions error:NULL];
-
-        {{/body.has_json_body}}
-        {{#body.has_raw_body}}
-        // Body
-
-        let bodyString = "{{{body.raw_body}}}"
-        request.HTTPBody = bodyString.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
-
-        {{/body.has_raw_body}}
-        {{#body.has_long_body}}
-        // Body
-
-        let bodyString = "" // set your body string
-        request.HTTPBody = bodyString.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
-
-        {{/body.has_long_body}}
-        /* Start a new Task */
-        let task = session.dataTaskWithRequest(request, completionHandler: { (data : NSData!, response : NSURLResponse!, error : NSError!) -> Void in
-            if (error == nil) {
-                // Success
-                let statusCode = (response as NSHTTPURLResponse).statusCode
-                println("URL Session Task Succeeded: HTTP \(statusCode)")
-            }
-            else {
-                // Failure
-                println("URL Session Task Failed: %@", error.localizedDescription);
-            }
-        })
-        task.resume()
-    }
-
-    {{#has_utils_query_string}}
-    /**
-     This creates a new query parameters string from the given NSDictionary. For
-     example, if the input is @{@"day":@"Tuesday", @"month":@"January"}, the output
-     string will be @"day=Tuesday&month=January".
-     @param queryParameters The input dictionary.
-     @return The created parameters string.
-    */
-    func stringFromQueryParameters(queryParameters : Dictionary<String, String>) -> String {
-        var parts: [String] = []
-        for (name, value) in queryParameters {
-            var part = NSString(format: "%@=%@",
-                name.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!,
-                value.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!)
-            parts.append(part)
-        }
-        return "&".join(parts)
-    }
-        
-    /**
-     Creates a new URL by adding the given query parameters.
-     @param URL The input URL.
-     @param queryParameters The query parameter dictionary to add.
-     @return A new NSURL.
-    */
-    func NSURLByAppendingQueryParameters(URL : NSURL!, queryParameters : Dictionary<String, String>) -> NSURL {
-        let URLString : NSString = NSString(format: "%@?%@", URL.absoluteString!, self.stringFromQueryParameters(queryParameters))
-        return NSURL(string: URLString)!
-    }
-    {{/has_utils_query_string}}
-}
+            params = {
+            {{#url.params}}
+                "{{{name}}}":"{{{value}}}",
+            {{/url.params}}
+            },
+            {{/url.has_params}}
+            {{#headers.has_headers}}
+            headers = {
+                {{#headers.header_list}}
+                "{{{header_name}}}":"{{{header_value}}}",
+                {{/headers.header_list}}
+            },
+            {{/headers.has_headers}}
+            {{#body.has_raw_body}}
+            data = "{{{body.raw_body}}}"
+            {{/body.has_raw_body}}
+            {{#body.has_long_body}}
+            data = "" # set your body string
+            {{/body.has_long_body}}
+            {{#body.has_url_encoded_body}}
+            data = {
+            {{#body.url_encoded_body}}
+                "{{{name}}}":"{{{value}}}",
+            {{/body.url_encoded_body}}
+            },
+            {{/body.has_url_encoded_body}}
+            {{#body.has_json_body}}
+            data = json.dumps({{{body.json_body_object}}})
+            {{/body.has_json_body}}
+        )
+        print('Response HTTP {status_code}'.format(status_code=r.status_code))
+    except requests.exceptions.RequestException as e:
+        print('HTTP Request failed')

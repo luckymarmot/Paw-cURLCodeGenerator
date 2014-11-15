@@ -66,7 +66,7 @@
       if (json_body) {
         return {
           "has_json_body": true,
-          "json_body_object": this.json_body_object(json_body, 1)
+          "json_body_object": this.json_body_object(json_body, 2)
         };
       }
       url_encoded_body = request.urlEncodedBody;
@@ -107,13 +107,13 @@
         indent = 0;
       }
       if (object === null) {
-        s = "NSNull()";
+        s = "None";
       } else if (typeof object === 'string') {
         s = "\"" + (addslashes(object)) + "\"";
       } else if (typeof object === 'number') {
         s = "" + object;
       } else if (typeof object === 'boolean') {
-        s = "" + (object ? "true" : "false");
+        s = "" + (object ? "True" : "False");
       } else if (typeof object === 'object') {
         indent_str = Array(indent + 2).join('    ');
         indent_str_children = Array(indent + 3).join('    ');
@@ -128,7 +128,7 @@
             return _results;
           }).call(this)).join(',\n') + ("\n" + indent_str + "]");
         } else {
-          s = "[\n" + ((function() {
+          s = "{\n" + ((function() {
             var _results;
             _results = [];
             for (key in object) {
@@ -136,11 +136,8 @@
               _results.push("" + indent_str_children + "\"" + (addslashes(key)) + "\": " + (this.json_body_object(value, indent + 1)));
             }
             return _results;
-          }).call(this)).join(',\n') + ("\n" + indent_str + "]");
+          }).call(this)).join(',\n') + ("\n" + indent_str + "}");
         }
-      }
-      if (indent <= 1) {
-        s = "let bodyObject = " + s;
       }
       return s;
     };
@@ -149,13 +146,11 @@
       request = context.getCurrentRequest();
       view = {
         "request": context.getCurrentRequest(),
+        "method": request.method.toLowerCase(),
         "url": this.url(request),
         "headers": this.headers(request),
         "body": this.body(request)
       };
-      if (view.url.has_params || (view.body && view.body.has_url_encoded_body)) {
-        view["has_utils_query_string"] = true;
-      }
       template = readFile("python.mustache");
       return Mustache.render(template, view);
     };
