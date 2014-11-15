@@ -1,6 +1,6 @@
-#Swift + NSURLSession Code Generator (Paw Extension)
+#Python + Requests Code Generator (Paw Extension)
 
-This a Paw Extension that generates code for Swift using the `NSURLSession` library.
+This a Paw Extension that generates code for Python using the [Requests](http://docs.python-requests.org/en/latest/) library.
 
 ##License
 
