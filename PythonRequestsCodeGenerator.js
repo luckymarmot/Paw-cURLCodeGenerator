@@ -61,7 +61,7 @@
       };
     };
     this.body = function(request) {
-      var json_body, name, raw_body, url_encoded_body, value;
+      var json_body, multipart_body, name, raw_body, url_encoded_body, value;
       json_body = request.jsonBody;
       if (json_body) {
         return {
@@ -78,6 +78,24 @@
             _results = [];
             for (name in url_encoded_body) {
               value = url_encoded_body[name];
+              _results.push({
+                "name": addslashes(name),
+                "value": addslashes(value)
+              });
+            }
+            return _results;
+          })()
+        };
+      }
+      multipart_body = request.multipartBody;
+      if (multipart_body) {
+        return {
+          "has_multipart_body": true,
+          "multipart_body": (function() {
+            var _results;
+            _results = [];
+            for (name in multipart_body) {
+              value = multipart_body[name];
               _results.push({
                 "name": addslashes(name),
                 "value": addslashes(value)

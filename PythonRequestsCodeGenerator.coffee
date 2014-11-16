@@ -54,6 +54,16 @@ PythonRequestsCodeGenerator = ->
                 } for name, value of url_encoded_body)
             }
 
+        multipart_body = request.multipartBody
+        if multipart_body 
+            return {
+                "has_multipart_body":true
+                "multipart_body": ({
+                    "name": addslashes name
+                    "value": addslashes value
+                } for name, value of multipart_body)
+            }
+
         raw_body = request.body
         if raw_body
             if raw_body.length < 5000

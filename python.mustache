@@ -36,6 +36,13 @@ def send_request():
             {{/body.url_encoded_body}}
             },
             {{/body.has_url_encoded_body}}
+            {{#body.has_multipart_body}}
+            files = {
+            {{#body.multipart_body}}
+                "{{{name}}}":"{{{value}}}",
+            {{/body.multipart_body}}
+            },
+            {{/body.has_multipart_body}}
             {{#body.has_json_body}}
             data = json.dumps({{{body.json_body_object}}})
             {{/body.has_json_body}}
