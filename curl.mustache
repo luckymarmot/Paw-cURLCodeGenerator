@@ -9,9 +9,12 @@ curl -X "{{{request.method}}}" "{{{request.url}}}" \
 	-d "{{{name}}}={{{value}}}" \
 	{{/body.url_encoded_body}}
 	{{/body.has_url_encoded_body}}
-	{{#body.has_raw_body}}
+	{{#body.has_raw_body_with_tabs_or_new_lines}}
+	-d $'{{{body.raw_body}}}' \
+	{{/body.has_raw_body_with_tabs_or_new_lines}}
+	{{#body.has_raw_body_without_tabs_or_new_lines}}
 	-d "{{{body.raw_body}}}" \
-	{{/body.has_raw_body}}
+	{{/body.has_raw_body_without_tabs_or_new_lines}}
 	{{#body.has_long_body}}
 	-d "{set your body string}" \
 	{{/body.has_long_body}}
