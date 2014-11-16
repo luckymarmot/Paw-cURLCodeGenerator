@@ -1,52 +1,22 @@
-import requests
-{{#body.has_json_body}}
-import json
-{{/body.has_json_body}}
-
-def send_request():
-    # {{{request.name}}} ({{{request.method}}} {{{url.base}}})
-
-    try:
-        r = requests.{{{method}}}(
-            url="{{{url.base}}}",
-        {{#url.has_params}}
-            params = {
-            {{#url.params}}
-                "{{{name}}}":"{{{value}}}",
-            {{/url.params}}
-            },
-            {{/url.has_params}}
-            {{#headers.has_headers}}
-            headers = {
-                {{#headers.header_list}}
-                "{{{header_name}}}":"{{{header_value}}}",
-                {{/headers.header_list}}
-            },
-            {{/headers.has_headers}}
-            {{#body.has_raw_body}}
-            data = "{{{body.raw_body}}}"
-            {{/body.has_raw_body}}
-            {{#body.has_long_body}}
-            data = "" # set your body string
-            {{/body.has_long_body}}
-            {{#body.has_url_encoded_body}}
-            data = {
-            {{#body.url_encoded_body}}
-                "{{{name}}}":"{{{value}}}",
-            {{/body.url_encoded_body}}
-            },
-            {{/body.has_url_encoded_body}}
-            {{#body.has_multipart_body}}
-            files = {
-            {{#body.multipart_body}}
-                "{{{name}}}":"{{{value}}}",
-            {{/body.multipart_body}}
-            },
-            {{/body.has_multipart_body}}
-            {{#body.has_json_body}}
-            data = json.dumps({{{body.json_body_object}}})
-            {{/body.has_json_body}}
-        )
-        print('Response HTTP {status_code}'.format(status_code=r.status_code))
-    except requests.exceptions.RequestException as e:
-        print('HTTP Request failed')
+curl -X "{{{request.method}}}" "{{{request.url}}}" \
+	{{#headers.has_headers}}
+	{{#headers.header_list}}
+	-H "{{{header_name}}}: {{{header_value}}}" \
+	{{/headers.header_list}}
+	{{/headers.has_headers}}
+	{{#body.has_url_encoded_body}}
+	{{#body.url_encoded_body}}
+	-d "{{{name}}}={{{value}}}" \
+	{{/body.url_encoded_body}}
+	{{/body.has_url_encoded_body}}
+	{{#body.has_raw_body}}
+	-d "{{{body.raw_body}}}" \
+	{{/body.has_raw_body}}
+	{{#body.has_long_body}}
+	-d "{set your body string}" \
+	{{/body.has_long_body}}
+	{{#body.has_multipart_body}}
+	{{#body.multipart_body}}
+	-F "{{{name}}}={{{value}}}" \
+	{{/body.multipart_body}}
+	{{/body.has_multipart_body}}

@@ -11,36 +11,6 @@
   };
 
   cURLCodeGenerator = function() {
-    this.url = function(request) {
-      var name, url_params, url_params_object, value;
-      url_params_object = (function() {
-        var _uri;
-        _uri = URI(request.url);
-        return _uri.search(true);
-      })();
-      url_params = (function() {
-        var _results;
-        _results = [];
-        for (name in url_params_object) {
-          value = url_params_object[name];
-          _results.push({
-            "name": addslashes(name),
-            "value": addslashes(value)
-          });
-        }
-        return _results;
-      })();
-      return {
-        "base": addslashes((function() {
-          var _uri;
-          _uri = URI(request.url);
-          _uri.search("");
-          return _uri;
-        })()),
-        "params": url_params,
-        "has_params": url_params.length > 0
-      };
-    };
     this.headers = function(request) {
       var header_name, header_value, headers;
       headers = request.headers;
@@ -61,14 +31,7 @@
       };
     };
     this.body = function(request) {
-      var json_body, multipart_body, name, raw_body, url_encoded_body, value;
-      json_body = request.jsonBody;
-      if (json_body) {
-        return {
-          "has_json_body": true,
-          "json_body_object": this.json_body_object(json_body, 2)
-        };
-      }
+      var multipart_body, name, raw_body, url_encoded_body, value;
       url_encoded_body = request.urlEncodedBody;
       if (url_encoded_body) {
         return {
@@ -119,53 +82,11 @@
         }
       }
     };
-    this.json_body_object = function(object, indent) {
-      var indent_str, indent_str_children, key, s, value;
-      if (indent == null) {
-        indent = 0;
-      }
-      if (object === null) {
-        s = "None";
-      } else if (typeof object === 'string') {
-        s = "\"" + (addslashes(object)) + "\"";
-      } else if (typeof object === 'number') {
-        s = "" + object;
-      } else if (typeof object === 'boolean') {
-        s = "" + (object ? "True" : "False");
-      } else if (typeof object === 'object') {
-        indent_str = Array(indent + 2).join('    ');
-        indent_str_children = Array(indent + 3).join('    ');
-        if (object.length != null) {
-          s = "[\n" + ((function() {
-            var _i, _len, _results;
-            _results = [];
-            for (_i = 0, _len = object.length; _i < _len; _i++) {
-              value = object[_i];
-              _results.push("" + indent_str_children + (this.json_body_object(value, indent + 1)));
-            }
-            return _results;
-          }).call(this)).join(',\n') + ("\n" + indent_str + "]");
-        } else {
-          s = "{\n" + ((function() {
-            var _results;
-            _results = [];
-            for (key in object) {
-              value = object[key];
-              _results.push("" + indent_str_children + "\"" + (addslashes(key)) + "\": " + (this.json_body_object(value, indent + 1)));
-            }
-            return _results;
-          }).call(this)).join(',\n') + ("\n" + indent_str + "}");
-        }
-      }
-      return s;
-    };
     this.generate = function(context) {
       var request, template, view;
       request = context.getCurrentRequest();
       view = {
         "request": context.getCurrentRequest(),
-        "method": request.method.toLowerCase(),
-        "url": this.url(request),
         "headers": this.headers(request),
         "body": this.body(request)
       };
