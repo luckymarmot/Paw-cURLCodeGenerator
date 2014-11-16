@@ -4,7 +4,7 @@ require "URI.js"
 addslashes = (str) ->
     ("#{str}").replace(/[\\"]/g, '\\$&')
 
-PythonRequestsCodeGenerator = ->
+cURLCodeGenerator = ->
 
     @url = (request) ->
         url_params_object = (() ->
@@ -109,15 +109,15 @@ PythonRequestsCodeGenerator = ->
             "headers": @headers request
             "body": @body request
 
-        template = readFile "python.mustache"
+        template = readFile "curl.mustache"
         Mustache.render template, view
 
     return
 
 
-PythonRequestsCodeGenerator.identifier =
-    "com.luckymarmot.PawExtensions.PythonRequestsCodeGenerator";
-PythonRequestsCodeGenerator.title =
-    "Python (Requests)";
+cURLCodeGenerator.identifier =
+    "com.luckymarmot.PawExtensions.cURLCodeGenerator";
+cURLCodeGenerator.title =
+    "cURL";
 
-registerCodeGenerator PythonRequestsCodeGenerator
+registerCodeGenerator cURLCodeGenerator

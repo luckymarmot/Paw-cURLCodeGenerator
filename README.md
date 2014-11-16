@@ -1,6 +1,6 @@
-#Python + Requests Code Generator (Paw Extension)
+#cURL Code Generator (Paw Extension)
 
-This a Paw Extension that generates code for Python using the [Requests](http://docs.python-requests.org/en/latest/) library.
+This is a Paw Extension that generates [cURL](http://en.wikipedia.org/wiki/CURL) command line code.
 
 ##License
 
