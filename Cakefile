@@ -1,7 +1,9 @@
 {print} = require 'sys'
-{spawn} = require 'child_process'
+{spawn, exec} = require 'child_process'
 
 file = 'cURLCodeGenerator.coffee'
+identifier = 'com.luckymarmot.PawExtensions.cURLCodeGenerator'
+target = '~/Library/Containers/com.luckymarmot.Paw/Data/Library/Application\\ Support/com.luckymarmot.Paw/Extensions/'
 
 task 'build', ->
     coffee = spawn 'coffee', ['-c', file]
@@ -17,3 +19,12 @@ task 'build', ->
 
 task 'watch', ->
     spawn 'coffee', ['--watch', '--compile', file]
+
+task 'install', ->
+  console.log "Installing Extension to #{target}"
+  exec([
+    "mkdir -p #{target}#{identifier}"
+    "cp -Rf * #{target}#{identifier}"
+  ].join(' && '), (err, stdout, stderr) ->
+    if err then console.log stderr.trim() else console.log 'Done'
+    )

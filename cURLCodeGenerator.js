@@ -88,8 +88,19 @@
         }
       }
     };
+    this.strip_last_backslash = function(string) {
+      var i, lines, _i, _ref;
+      lines = string.split("\n");
+      for (i = _i = _ref = lines.length - 1; _ref <= 0 ? _i <= 0 : _i >= 0; i = _ref <= 0 ? ++_i : --_i) {
+        lines[i] = lines[i].replace(/\s*\\\s*$/, "");
+        if (!lines[i].match(/^\s*$/)) {
+          break;
+        }
+      }
+      return lines.join("\n");
+    };
     this.generate = function(context) {
-      var request, template, view;
+      var rendered_code, request, template, view;
       request = context.getCurrentRequest();
       view = {
         "request": context.getCurrentRequest(),
@@ -97,7 +108,8 @@
         "body": this.body(request)
       };
       template = readFile("curl.mustache");
-      return Mustache.render(template, view);
+      rendered_code = Mustache.render(template, view);
+      return this.strip_last_backslash(rendered_code);
     };
   };
 
