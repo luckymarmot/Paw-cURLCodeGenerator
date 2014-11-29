@@ -1,0 +1,19 @@
+language: node_js
+node_js:
+- '0.10'
+before_install:
+- npm install coffee-script
+before_script:
+- ./node_modules/.bin/cake archive
+script:
+- ./node_modules/.bin/cake test
+deploy:
+  provider: releases
+  api_key:
+    secure: RJ4IcQtr5fZcTaV6fNoHSt2phYxXVqt9OMiUbKw5i8axtt+GwvoKJDE1TShyYaQgA15rfqUSPKjRv3tEZQybla4Kq5gnHzdQOjMEnT8RQp97MaZzXl/InO6qrQEA1GxoTVu9aPIfV+aMop/l5+njFg9fDKZtaerrp75XIewIUNA=
+  file: build/cURLCodeGenerator.zip
+  skip_cleanup: true
+  on:
+    tags: true
+    all_branches: true
+    repo: LuckyMarmot/Paw-cURLCodeGenerator
