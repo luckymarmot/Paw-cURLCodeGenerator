@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/LuckyMarmot/Paw-cURLCodeGenerator.svg?branch=master)](https://travis-ci.org/LuckyMarmot/Paw-cURLCodeGenerator)
+[![Build Status](https://travis-ci.org/luckymarmot/Paw-cURLCodeGenerator.svg?branch=master)](https://travis-ci.org/luckymarmot/Paw-cURLCodeGenerator)
 
 #cURL Code Generator (Paw Extension)
 
@@ -12,7 +12,7 @@ Copyright © 2014 Paw Inc.
 
 ##Contributors
 
-See [Contributors](https://github.com/LuckyMarmot/Paw-cURLCodeGenerator/graphs/contributors).
+See [Contributors](https://github.com/luckymarmot/Paw-cURLCodeGenerator/graphs/contributors).
 
 ##Credits
 
