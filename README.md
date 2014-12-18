@@ -2,13 +2,23 @@
 
 # cURL Code Generator (Paw Extension)
 
-This is a Paw Extension that generates [cURL](http://en.wikipedia.org/wiki/CURL) command line code.
+A [Paw Extension](http://luckymarmot.com/paw/extensions/) that generates [cURL](http://en.wikipedia.org/wiki/CURL) command line code.
 
 ## Installation
 
-* `npm install`
-* `cake build`
-* `cake install`
+```shell
+npm install
+cake build
+cake install
+```
+
+## Development
+
+During development, watch for changes:
+
+```shell
+cake watch
+```
 
 ## License
 
