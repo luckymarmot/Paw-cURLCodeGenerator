@@ -65,7 +65,7 @@ cURLCodeGenerator = ->
             if not lines[i].match(/^\s*$/)
                 break
         lines.join("\n")
-        
+
     @generate = (context) ->
         request = context.getCurrentRequest()
 
@@ -82,8 +82,9 @@ cURLCodeGenerator = ->
 
 
 cURLCodeGenerator.identifier =
-    "com.luckymarmot.PawExtensions.cURLCodeGenerator";
+    "com.luckymarmot.PawExtensions.cURLCodeGenerator"
 cURLCodeGenerator.title =
-    "cURL";
+    "cURL"
+cURLCodeGenerator.fileExtension = "sh"
 
 registerCodeGenerator cURLCodeGenerator
