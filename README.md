@@ -6,13 +6,19 @@ A [Paw Extension](http://luckymarmot.com/paw/extensions/) that generates [cURL](
 
 ## Installation
 
+Easily install this Paw Extension: [Install cURL Code Generator](http://luckymarmot.com/paw/extensions/cURLCodeGenerator)
+
+## Development
+
+### Build & Install
+
 ```shell
 npm install
 cake build
 cake install
 ```
 
-## Development
+### Watch
 
 During development, watch for changes:
 
