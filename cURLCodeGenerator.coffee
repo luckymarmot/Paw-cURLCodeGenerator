@@ -86,5 +86,6 @@ cURLCodeGenerator.identifier =
 cURLCodeGenerator.title =
     "cURL"
 cURLCodeGenerator.fileExtension = "sh"
+cURLCodeGenerator.languageHighlighter = "bash"
 
 registerCodeGenerator cURLCodeGenerator
