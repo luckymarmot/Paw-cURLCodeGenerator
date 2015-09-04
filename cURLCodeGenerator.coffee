@@ -1,5 +1,5 @@
-require "mustache.js"
-require "URI.js"
+# in API v1.1.0 and below (Paw 2.2.2 and below), require had no return value
+((root) -> root.Mustache = require("mustache.js") or root.Mustache)(this)
 
 addslashes = (str) ->
     ("#{str}").replace(/[\\"]/g, '\\$&')
