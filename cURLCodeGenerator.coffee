@@ -1,5 +1,6 @@
 # in API v0.2.0 and below (Paw 2.2.2 and below), require had no return value
 ((root) -> root.Mustache = require("mustache.js") or root.Mustache)(this)
+((root) -> root.Base64 = require("Base64.js") or root.Base64)(this)
 
 addslashes = (str) ->
     ("#{str}").replace(/[\\"]/g, '\\$&')
@@ -11,13 +12,61 @@ cURLCodeGenerator = ->
 
     @headers = (request) ->
         headers = request.headers
+
+        auth = null
+        if headers['Authorization']
+            auth = @auth request, headers['Authorization']
+            if auth
+                delete headers['Authorization']
+
         return {
             "has_headers": Object.keys(headers).length > 0
             "header_list": ({
                 "header_name": addslashes header_name
                 "header_value": addslashes header_value
             } for header_name, header_value of headers)
+            "auth": auth
         }
+
+    @auth = (request, authHeader) ->
+        match = authHeader.match(/([^\s]+)\s(.*)/) || []
+        scheme = match[1] || null
+        params = match[2] || null
+
+
+        if scheme == 'Basic'
+            decoded = Base64.atob(params)
+            userpass = decoded.match(/([^:]*):?(.*)/)
+
+            return {
+                "username": userpass[1] || '',
+                "password": userpass[2] || ''
+            }
+
+        digestDS = request.getHeaderByName('Authorization', true)
+        if digestDS and digestDS.length == 1 and digestDS.getComponentAtIndex(0).type == 'com.luckymarmot.PawExtensions.DigestAuthDynamicValue'
+            digestDV = digestDS.getComponentAtIndex(0)
+            DVuser = digestDV.username
+            username = ''
+            if typeof DVuser == 'object'
+                username = DVuser.getEvaluatedString()
+            else
+                username = DVuser
+            DVpass = digestDV.password
+            password = ''
+            if typeof DVpass == 'object'
+                password = DVpass.getEvaluatedString()
+            else
+                password = DVpass
+
+            return {
+                "isDigest": true,
+                "username": username,
+                "password": password
+            }
+
+        return null
+
 
     @body = (request) ->
         url_encoded_body = request.urlEncodedBody
