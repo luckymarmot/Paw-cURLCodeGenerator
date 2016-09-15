@@ -29,6 +29,7 @@ build_copy = () ->
     fs.writeFileSync "#{ build_dir }/LICENSE", fs.readFileSync("./LICENSE")
     fs.writeFileSync "#{ build_dir }/curl.mustache", fs.readFileSync("./curl.mustache")
     fs.writeFileSync "#{ build_dir }/mustache.js", fs.readFileSync("./node_modules/mustache/mustache.js")
+    fs.writeFileSync "#{ build_dir }/Base64.js", fs.readFileSync("./node_modules/Base64/base64.js")
 
 # build: build CoffeeScript and copy files to build directory
 build = (callback) ->
