@@ -43,20 +43,26 @@ cURLCodeGenerator = ->
                 "password": userpass[2] || ''
             }
 
-        if scheme == '**' and params.startsWith('digest is only')
-            digestDS = request.getHeaderByName('Authorization', true)
+        digestDS = request.getHeaderByName('Authorization', true)
+        if digestDS and digestDS.length == 1 and digestDS.getComponentAtIndex(0).type == 'com.luckymarmot.PawExtensions.DigestAuthDynamicValue'
             digestDV = digestDS.getComponentAtIndex(0)
             DVuser = digestDV.username
+            username = ''
             if typeof DVuser == 'object'
-                DVuser = DVuser.getEvaluatedString()
+                username = DVuser.getEvaluatedString()
+            else
+                username = DVuser
             DVpass = digestDV.password
+            password = ''
             if typeof DVpass == 'object'
-                DVpass = DVpass.getEvaluatedString()
+                password = DVpass.getEvaluatedString()
+            else
+                password = DVpass
 
             return {
                 "isDigest": true,
-                "username": DVuser,
-                "password": DVpass
+                "username": username,
+                "password": password
             }
 
         return null
