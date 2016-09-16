@@ -9,6 +9,7 @@ addslashes_single_quotes = (str) ->
     ("#{str}").replace(/[\\']/g, '\\$&')
 
 cURLCodeGenerator = ->
+    self = this
 
     @headers = (request) ->
         headers = request.headers
@@ -29,6 +30,8 @@ cURLCodeGenerator = ->
         }
 
     @auth = (request, authHeader) ->
+        if self.options.useHeader
+            return null
         match = authHeader.match(/([^\s]+)\s(.*)/) || []
         scheme = match[1] || null
         params = match[2] || null
@@ -115,11 +118,9 @@ cURLCodeGenerator = ->
                 break
         lines.join("\n")
 
-    @generate = (context) ->
-        request = context.getCurrentRequest()
-
+    @generateRequest = (request) ->
         view =
-            "request": context.getCurrentRequest()
+            "request": request
             "headers": @headers request
             "body": @body request
 
@@ -130,7 +131,17 @@ cURLCodeGenerator = ->
 
         template = readFile "curl.mustache"
         rendered_code = Mustache.render template, view
-        @strip_last_backslash rendered_code
+        return @strip_last_backslash rendered_code
+
+    @generate = (context, requests, options) ->
+        self.options = (options || {}).inputs || {}
+        console.log('@@@@', JSON.stringify(options, null, 2))
+
+        curls = requests.map((request) ->
+            return self.generateRequest(request)
+        )
+
+        return curls.join('\n')
 
     return
 
@@ -141,5 +152,8 @@ cURLCodeGenerator.title =
     "cURL"
 cURLCodeGenerator.fileExtension = "sh"
 cURLCodeGenerator.languageHighlighter = "bash"
+cURLCodeGenerator.inputs = [
+    new InputField("useHeader", "do not use -u option", "Checkbox", {defaultValue: false})
+]
 
 registerCodeGenerator cURLCodeGenerator
