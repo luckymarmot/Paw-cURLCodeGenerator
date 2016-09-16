@@ -135,7 +135,6 @@ cURLCodeGenerator = ->
 
     @generate = (context, requests, options) ->
         self.options = (options || {}).inputs || {}
-        console.log('@@@@', JSON.stringify(options, null, 2))
 
         curls = requests.map((request) ->
             return self.generateRequest(request)
