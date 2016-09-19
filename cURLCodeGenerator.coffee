@@ -125,9 +125,12 @@ cURLCodeGenerator = ->
             "body": @body request
 
         # Make multi-line description.
-        view.request.cURLDescription = view.request.description.split('\n').map((line, index) ->
-          return if index > 0 then "##{line}" else line
-        ).join('\n')
+        if view.request.description
+            view.request.cURLDescription = view.request.description.split('\n').map((line, index) ->
+              return "# #{line}"
+            ).join('\n')
+        else
+            view.request.cURLDescription = ''
 
         template = readFile "curl.mustache"
         rendered_code = Mustache.render template, view

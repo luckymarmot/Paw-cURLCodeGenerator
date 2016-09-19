@@ -1,6 +1,7 @@
-# {{{request.name}}}
-# {{{request.cURLDescription}}}
-curl -X "{{{request.method}}}" "{{{request.url}}}" \
+{{#request.name}}## {{{request.name}}}
+{{/request.name}}{{#request.cURLDescription}}
+{{{request.cURLDescription}}}
+{{/request.cURLDescription}}curl -X "{{{request.method}}}" "{{{request.url}}}" \
      {{#headers.has_headers}}
      {{#headers.header_list}}
      -H "{{{header_name}}}: {{{header_value}}}" \
