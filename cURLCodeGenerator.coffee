@@ -92,6 +92,14 @@ cURLCodeGenerator = ->
                 } for name, value of multipart_body)
             }
 
+        json_body = request.jsonBody
+        if json_body?
+            return {
+                "has_raw_body_with_tabs_or_new_lines": true
+                "has_raw_body_without_tabs_or_new_lines": false
+                "raw_body": addslashes_single_quotes(JSON.stringify(json_body, null, 2))
+            }
+
         raw_body = request.body
         if raw_body
             if raw_body.length < 5000
