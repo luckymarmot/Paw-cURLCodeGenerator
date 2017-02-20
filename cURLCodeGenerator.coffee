@@ -130,6 +130,7 @@ cURLCodeGenerator = ->
         view =
             "request": request
             "request_is_head": request.method == "HEAD"
+            "specify_method": request.method != "GET" && request.method != "HEAD"
             "headers": @headers request
             "body": @body request
 
