@@ -129,6 +129,7 @@ cURLCodeGenerator = ->
     @generateRequest = (request) ->
         view =
             "request": request
+            "request_is_head": request.method == "HEAD"
             "headers": @headers request
             "body": @body request
 
