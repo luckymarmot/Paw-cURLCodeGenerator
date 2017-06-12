@@ -8,7 +8,7 @@
      {{/headers.header_list}}
      {{/headers.has_headers}}
      {{#headers.auth}}
-     -u {{{headers.auth.username}}}:{{{headers.auth.password}}} {{#headers.auth.isDigest}}--digest{{/headers.auth.isDigest}}\
+     -u '{{{headers.auth.username}}}:{{{headers.auth.password}}}' {{#headers.auth.isDigest}}--digest{{/headers.auth.isDigest}}\
      {{/headers.auth}}
      {{! ----- }}
      {{#body.has_url_encoded_body}}
