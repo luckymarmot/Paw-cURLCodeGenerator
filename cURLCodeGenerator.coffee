@@ -6,7 +6,7 @@ addslashes = (str) ->
     ("#{str}").replace(/[\\"]/g, '\\$&')
 
 addslashes_single_quotes = (str) ->
-    ("#{str}").replace(/[\\']/g, '\\$&')
+    ("#{str}").replace(/\\/g, '\\$&').replace(/'/g, "'\"'\"'")
 
 cURLCodeGenerator = ->
     self = this
