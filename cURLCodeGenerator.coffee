@@ -23,8 +23,8 @@ cURLCodeGenerator = ->
         return {
             "has_headers": Object.keys(headers).length > 0
             "header_list": ({
-                "header_name": addslashes header_name
-                "header_value": addslashes header_value
+                "header_name": addslashes_single_quotes header_name
+                "header_value": addslashes_single_quotes header_value
             } for header_name, header_value of headers)
             "auth": auth
         }
