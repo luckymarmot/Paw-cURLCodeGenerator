@@ -6,7 +6,7 @@ addslashes = (str) ->
     ("#{str}").replace(/[\\"]/g, '\\$&')
 
 addslashes_single_quotes = (str) ->
-    ("#{str}").replace(/[\\']/g, '\\$&')
+    ("#{str}").replace(/\\/g, '\\$&').replace(/'/g, "'\"'\"'")
 
 cURLCodeGenerator = ->
     self = this
@@ -42,8 +42,8 @@ cURLCodeGenerator = ->
             userpass = decoded.match(/([^:]*):?(.*)/)
 
             return {
-                "username": userpass[1] || '',
-                "password": userpass[2] || ''
+                "username": addslashes_single_quotes(userpass[1]) || '',
+                "password": addslashes_single_quotes(userpass[2]) || ''
             }
 
         digestDS = request.getHeaderByName('Authorization', true)
@@ -64,8 +64,8 @@ cURLCodeGenerator = ->
 
             return {
                 "isDigest": true,
-                "username": username,
-                "password": password
+                "username": addslashes_single_quotes(username),
+                "password": addslashes_single_quotes(password)
             }
 
         return null
