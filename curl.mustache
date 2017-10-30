@@ -4,7 +4,7 @@
 {{/request.cURLDescription}}curl {{#request_is_head}}--head {{/request_is_head}}{{#specify_method}}-X "{{{request.method}}}" {{/specify_method}}"{{{request.url}}}" \
      {{#headers.has_headers}}
      {{#headers.header_list}}
-     -H "{{{header_name}}}: {{{header_value}}}" \
+     -H '{{{header_name}}}: {{{header_value}}}' \
      {{/headers.header_list}}
      {{/headers.has_headers}}
      {{#headers.auth}}
