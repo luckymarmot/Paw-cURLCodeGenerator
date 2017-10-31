@@ -38,12 +38,14 @@ cURLCodeGenerator = ->
 
 
         if scheme == 'Basic'
-            decoded = Base64.atob(params)
+            try
+                decoded = Base64.atob(params)
+            catch err
+                return null
             userpass = decoded.match(/([^:]*):?(.*)/)
-
             return {
-                "username": addslashes_single_quotes(userpass[1]) || '',
-                "password": addslashes_single_quotes(userpass[2]) || ''
+                "username": addslashes_single_quotes(userpass[1] || ''),
+                "password": addslashes_single_quotes(userpass[2] || ''),
             }
 
         digestDS = request.getHeaderByName('Authorization', true)
